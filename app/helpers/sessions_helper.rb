@@ -1,4 +1,13 @@
 module SessionsHelper
+  def redirect_back_or(default)
+    redirect_to(session[:return_to] || default)
+    clear_return_to
+  end
+
+  def store_location
+    session[:return_to] = request.fullpath
+  end
+
   def sign_in(user)
     #cookies.permanent[:remember_token] = user.remember_token
     #current_user = user
@@ -26,7 +35,15 @@ module SessionsHelper
     @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
 
+  def current_user?(user)
+    user == current_user
+  end
+
   private
+
+    def clear_return_to
+      session.delete(:return_to)
+    end
 
     #def user_from_remember_token
     #  remember_token = cookies[:remember_token]
